@@ -1,3 +1,6 @@
+import ldclient
+from ldclient.config import Config
+import random
 import streamlit as st
 from csv_writer import write_participants_to_csv
 from generate import generate_ideas
@@ -144,3 +147,22 @@ if st.sidebar.button("Submit"):
         st.write(content)
     else:
         st.write("Please enter a hackathon link.")
+
+# Initialize LaunchDarkly client with your LaunchDarkly API key
+api_key = "api-7f74da19-c8ce-439a-ae76-1e0fb3485987"
+ldclient.set_config(Config(api_key))
+ld_client = ldclient.get()
+
+# Check if the resume feature is enabled for this user
+feature_key = "show_resume_feature"
+
+# Construct the user object with context kind (user) and attribute (key)
+user = {
+    "key": random.randint(1, 10000),  # User ID
+    "name": devpost_username  # Name attribute
+}
+
+# Evaluate the feature flag based on the user object
+st.write(user)
+st.write(ld_client.variation(feature_key, user, True))
+resume_feature_enabled = ld_client.variation(feature_key, hackathon_link, False)
