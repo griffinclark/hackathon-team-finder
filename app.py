@@ -1,5 +1,6 @@
 import streamlit as st
 from csv_writer import write_participants_to_csv
+from generate import generate_ideas
 from webscraper import scrape_hackathon_page
 import hashlib
 import os
@@ -132,10 +133,14 @@ if st.sidebar.button("Submit"):
             if participants:
                 st.write(f"Scraped {len(participants)} participants.")
                 write_participants_to_csv(participants, filename=f"{current_hash}.csv")
-                st.write("Data written to participants.csv. Starting generation...")
+                st.write("Data written to participants.csv.")
             else:
                 st.write("Failed to scrape participants.")
         else:
             st.write("Hackathon link has not changed. No need to scrape again.")
+        
+        st.write("Generating ideas...")
+        content = generate_ideas(hackathon_description, hackathon_sponsors)
+        st.write(content)
     else:
         st.write("Please enter a hackathon link.")
